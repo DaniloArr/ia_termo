@@ -33,7 +33,7 @@ verde = (6, 214, 160)
 amarelo = (255, 209, 102)
 
 entrada = ""
-tentativas = []
+tentativas = [""]
 alfabeto = "ABCDEFGHIJKLNMOPQRSTUVWXYZÇ"
 letras_sobra = alfabeto
 fim_de_jogo = False
@@ -57,26 +57,27 @@ def letras_ja_usadas(tentativas):
   return letras_nao_usadas
 
 def determina_cor(tentativa, j):
-  letra = tentativa[j]
+    letra = tentativa[j]
 
-  if letra == resposta[j]:
-    return verde
-  
-  elif letra in resposta:
-    n_letras_resp = resposta.count(letra)
-    n_correto = 0
-    n_ocorrencias = 0
-    for i in range(5):
-      if tentativa[i] == letra:
-        if i <= j:
-          n_ocorrencias += 1
-        if letra == resposta[i]:
-          n_correto += 1
+    if letra == resposta[j]:
+        return verde
 
-      if (n_letras_resp - n_correto - n_ocorrencias) >= 0:
-        return amarelo
-  
-  return cinza
+    elif letra in resposta:
+        n_letras_resp = resposta.count(letra)
+        n_correto = 0
+        n_ocorrencias = 0
+        for i in range(5):
+            if tentativa[i] == letra:
+                if i <= j:
+                    n_ocorrencias += 1
+                if letra == resposta[i]:
+                    n_correto += 1
+
+        if (n_letras_resp - n_correto - n_ocorrencias) >= 0:
+            return amarelo
+
+    return cinza
+
 
 #config tela
 tela = pygame.display.set_mode((largura, altura))

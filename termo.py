@@ -2,12 +2,18 @@
 
 import random
 import pygame
+import unicodedata
+
+def remover_acentos(palavra):
+    palavra_sem_acentos = ''.join(c for c in unicodedata.normalize('NFD', palavra) if unicodedata.category(c) != 'Mn')
+    return palavra_sem_acentos.upper()
 
 def abrir_dic(nome_arquivo):
-  arquivo = open(nome_arquivo, "r", encoding="utf-8")
-  palavras = arquivo.readlines()
-  arquivo.close()
-  return [palavra[:5].upper() for palavra in palavras] 
+    arquivo = open(nome_arquivo, "r", encoding="utf-8")
+    palavras = arquivo.readlines()
+    arquivo.close()
+    return [remover_acentos(palavra)[:5] for palavra in palavras]
+
 
 dic_termo = abrir_dic("dicionario_termo.txt")
 dic_tentativas = abrir_dic("tentativas.txt")
@@ -50,6 +56,28 @@ def letras_ja_usadas(tentativas):
 
   return letras_nao_usadas
 
+def determina_cor(tentativa, j):
+  letra = tentativa[j]
+
+  if letra == resposta[j]:
+    return verde
+  
+  elif letra in resposta:
+    n_letras_resp = resposta.count(letra)
+    n_correto = 0
+    n_ocorrencias = 0
+    for i in range(5):
+      if tentativa[i] == letra:
+        if i <= j:
+          n_ocorrencias += 1
+        if letra == resposta[i]:
+          n_correto += 1
+
+      if (n_letras_resp - n_correto - n_ocorrencias) >= 0:
+        return amarelo
+  
+  return cinza
+
 #config tela
 tela = pygame.display.set_mode((largura, altura))
 
@@ -71,7 +99,7 @@ while animacao:
       pygame.draw.rect(tela, cinza, quadrado, width=2, border_radius=3)
 
       if i < len(tentativas):
-        cor = cinza
+        cor = determina_cor(tentativas[i], j)
         pygame.draw.rect(tela, cor, quadrado, border_radius=3)
         letra = fonte.render(tentativas[i][j], False, (255, 255, 255))
         superficie = letra.get_rect(center= (x + tm_quadrado//2, y + tm_quadrado//2))
@@ -86,6 +114,11 @@ while animacao:
 
     y += tm_quadrado + margem
 
+  if len(tentativas) == 6 and tentativas[5] != resposta:
+    fim_de_jogo = True
+    letras = fonte.render(resposta, False, cinza)
+    superficie = letras.get_rect(center= (largura//2, altura-margem_inferior//2-margem))
+    tela.blit(letras, superficie)
 
   pygame.display.flip()
 
@@ -104,11 +137,18 @@ while animacao:
           entrada = entrada[:len(entrada)-1]
 
       elif evento.key == pygame.K_RETURN:
-        if len(entrada) == 5 and entrada not in tentativas:
+        if len(entrada) == 5 and entrada in dic_tentativas:
           tentativas.append(entrada)
           letras_sobra = letras_ja_usadas(tentativas)
           fim_de_jogo = True if entrada == resposta else False
           entrada = ""
+        
+      elif evento.key == pygame.K_SPACE:
+        fim_de_jogo = False
+        resposta = random.choice(dic_termo)
+        entrada = ""
+        tentativas = []
+        letras_sobra = alfabeto
 
 
       elif len(entrada) < 5 and not fim_de_jogo:

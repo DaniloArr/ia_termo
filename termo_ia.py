@@ -21,6 +21,9 @@ dic_tentativas = abrir_dic("tentativas.txt")
 resposta = random.choice(dic_termo)
 print(resposta)
 
+
+primeira_tentativa = random.choice(dic_termo) # gera a 1 palavra para ser tentada pela I.A.
+
 largura = 600
 altura = 700
 margem = 10
@@ -33,7 +36,16 @@ verde = (6, 214, 160)
 amarelo = (255, 209, 102)
 
 entrada = ""
-tentativas = [""]
+tentativas = [primeira_tentativa]
+
+letras_verde = []
+letras_amarela = []
+letras_cinza = []
+
+ultima_palavra = []
+
+cont = 0
+
 alfabeto = "ABCDEFGHIJKLNMOPQRSTUVWXYZÇ"
 letras_sobra = alfabeto
 fim_de_jogo = False
@@ -78,6 +90,43 @@ def determina_cor(tentativa, j):
 
     return cinza
 
+def switchCorExtenso(cor, palavra_tentativa, posicao_letra):
+    letra = palavra_tentativa[posicao_letra]
+    letra_e_pos = {"letra": letra, "posicao": posicao_letra}
+
+    if cor == cinza and letra not in letras_cinza:
+        letras_cinza.append(letra)
+
+    elif cor == amarelo:
+        if all(
+            (
+                letra_e_pos["letra"] != dic["letra"] or letra_e_pos["posicao"] != dic["posicao"]
+            )
+            for dic in letras_amarela
+        ) or not letras_amarela:
+            letras_amarela.append({"letra": letra, "posicao": posicao_letra})
+
+    elif cor == verde:
+        if all(
+            (
+                letra_e_pos["letra"] != dic["letra"] or letra_e_pos["posicao"] != dic["posicao"]
+            )
+            for dic in letras_verde
+        ) or not letras_verde:
+            letras_verde.append({"letra": letra, "posicao": posicao_letra})
+
+
+  # elif cor == verde and letra not in [dic["letra"] for dic in letras_amarela]:
+  #   letras_verde.append({"letra": letra, "posicao": posicao_letra})
+  
+def mostra(cont):
+    if cont == 0:
+      print(f"letras cinzas {letras_cinza} \n")
+      print(f"letras amarelas {letras_amarela} \n")
+      print(f"letras verdes {letras_verde} \n")
+    cont += 1 
+    return cont
+
 
 #config tela
 tela = pygame.display.set_mode((largura, altura))
@@ -101,6 +150,7 @@ while animacao:
 
       if i < len(tentativas):
         cor = determina_cor(tentativas[i], j)
+        switchCorExtenso(cor,tentativas[i], j)
         pygame.draw.rect(tela, cor, quadrado, border_radius=3)
         letra = fonte.render(tentativas[i][j], False, (255, 255, 255))
         superficie = letra.get_rect(center= (x + tm_quadrado//2, y + tm_quadrado//2))
@@ -120,6 +170,7 @@ while animacao:
     letras = fonte.render(resposta, False, cinza)
     superficie = letras.get_rect(center= (largura//2, altura-margem_inferior//2-margem))
     tela.blit(letras, superficie)
+    cont = mostra(cont)
 
   pygame.display.flip()
 
@@ -147,8 +198,9 @@ while animacao:
       elif evento.key == pygame.K_SPACE:
         fim_de_jogo = False
         resposta = random.choice(dic_termo)
+        primeira_tentativa = random.choice(dic_termo) # gera a 1 palavra para ser tentada pela I.A.
         entrada = ""
-        tentativas = []
+        tentativas = [primeira_tentativa]
         letras_sobra = alfabeto
 
 

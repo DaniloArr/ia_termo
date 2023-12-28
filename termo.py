@@ -42,7 +42,13 @@ fonte_pequena = pygame.font.SysFont("free sans bold", tm_quadrado//2)
 
 
 def letras_ja_usadas(tentativas):
- letras_usadas = "".join(tentativas)
+  letras_usadas = "".join(tentativas)
+  letras_nao_usadas = ""
+  for letra in alfabeto:
+    if letra not in letras_usadas:
+      letras_nao_usadas = letras_nao_usadas + letra
+
+  return letras_nao_usadas
 
 #config tela
 tela = pygame.display.set_mode((largura, altura))
@@ -71,6 +77,11 @@ while animacao:
         superficie = letra.get_rect(center= (x + tm_quadrado//2, y + tm_quadrado//2))
         tela.blit(letra, superficie)
 
+      if i == len(tentativas) and j < len(entrada):
+        letra = fonte.render(entrada[j], False, cinza)
+        superficie = letra.get_rect(center= (x + tm_quadrado//2, y + tm_quadrado//2))
+        tela.blit(letra, superficie)
+
       x += tm_quadrado + margem
 
     y += tm_quadrado + margem
@@ -88,9 +99,14 @@ while animacao:
       if evento.key == pygame.K_ESCAPE:
         animacao = False
 
+      if evento.key == pygame.K_BACKSPACE:
+        if len(entrada) > 0:
+          entrada = entrada[:len(entrada)-1]
+
       elif evento.key == pygame.K_RETURN:
         if len(entrada) == 5 and entrada not in tentativas:
           tentativas.append(entrada)
+          letras_sobra = letras_ja_usadas(tentativas)
           fim_de_jogo = True if entrada == resposta else False
           entrada = ""
 

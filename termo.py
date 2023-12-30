@@ -33,7 +33,7 @@ verde = (6, 214, 160)
 amarelo = (255, 209, 102)
 
 entrada = ""
-tentativas = [""]
+tentativas = []
 alfabeto = "ABCDEFGHIJKLNMOPQRSTUVWXYZÇ"
 letras_sobra = alfabeto
 fim_de_jogo = False

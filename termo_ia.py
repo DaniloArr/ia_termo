@@ -14,9 +14,15 @@ def abrir_dic(nome_arquivo):
     arquivo.close()
     return [remover_acentos(palavra)[:5] for palavra in palavras]
 
+def abrir_arquivo(nome_arquivo):
+    arquivo = open(nome_arquivo, 'a', encoding='utf-8')
+    return arquivo
+
 
 dic_termo = abrir_dic("dicionario_termo.txt")
 dic_tentativas = abrir_dic("tentativas.txt")
+arquivo_saida = abrir_arquivo('arquivo_saida.txt')
+
 
 resposta = random.choice(dic_termo)
 print(resposta)
@@ -42,9 +48,10 @@ letras_verde = []
 letras_amarela = []
 letras_cinza = []
 
-ultima_palavra = []
+populacao_posiveis_respostas = []
 
 cont = 0
+conta_loop = 0
 
 alfabeto = "ABCDEFGHIJKLNMOPQRSTUVWXYZÇ"
 letras_sobra = alfabeto
@@ -127,6 +134,42 @@ def mostra(cont):
     cont += 1 
     return cont
 
+def genetico(arquivo_saida, conta_loop):
+    
+    if letras_cinza:
+      for letra in letras_cinza:
+          restricao_palavras_cinzas(letra, conta_loop, arquivo_saida)
+          conta_loop += 1
+    
+    #if letras_amarela:
+    
+    arquivo_saida.close()
+    return conta_loop
+
+
+    
+
+def restricao_palavras_cinzas(letra, conta_loop, arquivo_saida):
+
+    if conta_loop == 0:
+        for palavra in dic_tentativas:
+            if letra not in palavra:
+                populacao_posiveis_respostas.append(palavra)
+    elif 0 < conta_loop <= 4:
+        # Crie uma cópia da lista antes de limpar
+        copia_populacao = list(populacao_posiveis_respostas)
+        populacao_posiveis_respostas.clear()
+        for palavra in copia_populacao:
+            if letra not in palavra and palavra:
+                populacao_posiveis_respostas.append(palavra)
+
+    if conta_loop <= 4:
+        with open('arquivo_saida.txt', 'w', encoding='utf-8') as arquivo_saida:
+            for palavra in populacao_posiveis_respostas:
+                arquivo_saida.write(palavra + '\n')
+
+
+   
 
 #config tela
 tela = pygame.display.set_mode((largura, altura))
@@ -163,6 +206,10 @@ while animacao:
 
       x += tm_quadrado + margem
 
+    conta_loop = genetico(arquivo_saida, conta_loop)
+    cont = mostra(cont)
+    # inicio do algoritmo genetico e suas restrições
+    
     y += tm_quadrado + margem
 
   if len(tentativas) == 6 and tentativas[5] != resposta:

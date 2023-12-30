@@ -141,7 +141,17 @@ def genetico(arquivo_saida, conta_loop):
           restricao_palavras_cinzas(letra, conta_loop, arquivo_saida)
           conta_loop += 1
     
-    #if letras_amarela:
+    if letras_amarela:
+       for vet in letras_amarela:
+          letra = vet["letra"]
+          pos = vet["posicao"]
+          restricao_palavras_amarelas(letra, pos, arquivo_saida)
+    
+    if letras_verde:
+      for vet in letras_verde:
+        letra = vet["letra"]
+        pos = vet["posicao"]
+        restricao_palavras_verdes(letra, pos, arquivo_saida)
     
     arquivo_saida.close()
     return conta_loop
@@ -169,7 +179,31 @@ def restricao_palavras_cinzas(letra, conta_loop, arquivo_saida):
                 arquivo_saida.write(palavra + '\n')
 
 
+def restricao_palavras_amarelas(letra, pos, arquivo_saida):
    
+  copia_populacao = list(populacao_posiveis_respostas)
+  populacao_posiveis_respostas.clear()
+
+  for palavra in copia_populacao:
+    if letra != palavra[pos] and letra in palavra:
+      populacao_posiveis_respostas.append(palavra)
+
+  with open('arquivo_saida.txt', 'w', encoding='utf-8') as arquivo_saida:
+    for palavra in populacao_posiveis_respostas:
+      arquivo_saida.write(palavra + '\n')
+
+def restricao_palavras_verdes(letra, pos, arquivo_saida):
+   
+  copia_populacao = list(populacao_posiveis_respostas)
+  populacao_posiveis_respostas.clear()
+
+  for palavra in copia_populacao:
+    if letra == palavra[pos]:
+      populacao_posiveis_respostas.append(palavra)
+
+  with open('arquivo_saida.txt', 'w', encoding='utf-8') as arquivo_saida:
+    for palavra in populacao_posiveis_respostas:
+      arquivo_saida.write(palavra + '\n')
 
 #config tela
 tela = pygame.display.set_mode((largura, altura))

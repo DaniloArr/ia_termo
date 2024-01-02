@@ -22,14 +22,14 @@ def abrir_arquivo(nome_arquivo):
 dic_termo = abrir_dic("dicionario_termo.txt")
 dic_tentativas = abrir_dic("tentativas.txt")
 arquivo_saida = abrir_arquivo('arquivo_saida.txt')
-resultados_ia = abrir_arquivo('resultados_ia.txt')
+resultados_ia = abrir_arquivo('resultados_ia2.txt')
 
 
 resposta = random.choice(dic_termo)
 print(resposta)
 
 
-primeira_tentativa = random.choice(dic_termo) # gera a 1 palavra para ser tentada pela I.A.
+primeira_tentativa = "UREIA" # gera a 1 palavra para ser tentada pela I.A.
 
 largura = 600
 altura = 700
@@ -245,12 +245,9 @@ def sortea_resposta(arquivo_saida, tentativas, conta_escrita):
 
    
 def resultados(tentativas, conta_escrita):
-
-  conta_vogal = 0
-  conta_consoante = 0
   
   if conta_escrita == 0:
-    with open('resultados_ia.txt', 'a', encoding='utf-8') as resultados_ia:
+    with open('resultados_ia2.txt', 'a', encoding='utf-8') as resultados_ia:
       resultados_ia.write(f"Foram {len(tentativas)} tentativas que tiveram como resultado final: ")
       if tentativas[-1] == resposta:
          resultados_ia.write("sucesso \n")
@@ -259,44 +256,12 @@ def resultados(tentativas, conta_escrita):
 
       resultados_ia.write(f"chute inicial {tentativas[0]}\n")
       resultados_ia.write(f"resposta {resposta} \n")
-      conta_consoante = conta_consoantes(tentativas[0])
-      conta_vogal = conta_vogais(tentativas[0])
-      resultados_ia.write(f"na palavra inicial foram usadas:\n")
-      resultados_ia.write(f"{conta_vogal} vogais \n")
-      resultados_ia.write(f"{conta_consoante} consoantes \n")
       resultados_ia.write("--------------------------------------------------------------------\n")
 
     
   conta_escrita += 1
 
   return conta_escrita
-
-def conta_consoantes(palavra):
- 
-  palavra = palavra.lower()
-  consoantes = set("bcdfghjklmnpqrstvwxyz")
-
-  contador = 0
-
-  for letra in palavra:
-    if letra in consoantes:
-      contador += 1
-
-  return contador
-
-def conta_vogais(palavra):
- 
-  palavra = palavra.lower()
-  vogais = set("aeiou")
-
-  contador = 0
-
-  for letra in palavra:
-    if letra in vogais:
-      contador += 1
-
-  return contador
-   
 
 #config tela
 tela = pygame.display.set_mode((largura, altura))
